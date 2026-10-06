@@ -45,6 +45,8 @@ const LOCAL_ID_KEY='cosmos.profile.id.v2';
 const LOCAL_META_KEY='cosmos.profile.meta.v2';
 const LOCAL_DB='cosmos-local-v2';
 let localIdentity=null;
+let accountHeartbeatTimer=null;
+let renewingAnonymousAccount=false;
 function setAuthError(m){$('authError').textContent=m||''}
 function toast(message){const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
 function randomLetters(length=32){const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';const bytes=new Uint8Array(length);crypto.getRandomValues(bytes);let out='';for(const b of bytes)out+=alphabet[b%alphabet.length];return out}
@@ -94,14 +96,49 @@ async function finishAuth(){
   $('authOverlay').classList.add('hidden');
   return true;
 }
+async function renewAnonymousAccount(){
+  if(renewingAnonymousAccount)return;
+  renewingAnonymousAccount=true;
+  try{
+    if(accountHeartbeatTimer){clearInterval(accountHeartbeatTimer);accountHeartbeatTimer=null}
+    await cosmosSb.auth.signOut();
+    localIdentity=null;
+    localStorage.removeItem(LOCAL_ID_KEY);localStorage.removeItem(LOCAL_META_KEY);
+    $('authOverlay').classList.remove('hidden');
+    $('authMessage').textContent='Creating a new Cosmos profile…';
+    const {error}=await cosmosSb.auth.signInAnonymously();
+    if(error)throw error;
+    if(await finishAuth())startAccountHeartbeat();
+  }catch(e){
+    $('authMessage').textContent='Profile renewal failed';
+    setAuthError(e.message||'Could not create a new profile.');
+    $('connectionStatus').textContent='Profile renewal failed';
+  }finally{renewingAnonymousAccount=false}
+}
+async function accountHeartbeat(){
+  if(renewingAnonymousAccount)return;
+  const {data,error}=await cosmosSb.rpc('cosmos_account_heartbeat');
+  if(error){
+    const status=Number(error.status||0);
+    if(status===401||status===403||error.code==='PGRST301')await renewAnonymousAccount();
+    else console.warn('Account heartbeat:',error.message);
+    return;
+  }
+  if(data!==true)await renewAnonymousAccount();
+}
+function startAccountHeartbeat(){
+  if(accountHeartbeatTimer)clearInterval(accountHeartbeatTimer);
+  accountHeartbeat();
+  accountHeartbeatTimer=setInterval(accountHeartbeat,5000);
+}
 (async()=>{
   $('authMessage').textContent='Connecting to Cosmos…';
   try{
     const {data:{session}}=await cosmosSb.auth.getSession();
-    if(session){if(await finishAuth())return;await cosmosSb.auth.signOut();}
+    if(session){if(await finishAuth()){startAccountHeartbeat();return;}await cosmosSb.auth.signOut();}
     const {data,error}=await cosmosSb.auth.signInAnonymously();
     if(error){$('authMessage').textContent='Profile setup failed';setAuthError('Enable Anonymous Sign-Ins in Supabase Authentication settings. '+error.message);$('connectionStatus').textContent='Offline / authentication unavailable';return;}
-    await finishAuth();
+    if(await finishAuth())startAccountHeartbeat();
   }catch(e){$('authMessage').textContent='Profile setup failed';setAuthError(e.message||'Unexpected startup error.');$('connectionStatus').textContent='Startup error';}
 })();
 $('copyIdBtn').onclick=async()=>{const id=$('localProfileId').textContent;if(!id||id==='—')return;try{await navigator.clipboard.writeText(id);toast('Profile ID copied');}catch{toast('Could not copy profile ID')}};
