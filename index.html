@@ -1,1 +1,109 @@
-code
+  limit 1;
+
+  if target_id is null then
+    return false;
+  end if;
+
+  update public.profiles
+  set nickname = cleaned,
+      updated_at = now()
+  where id = target_id;
+
+  return true;
+end;
+$$;
+
+revoke all on function public.cosmos_set_nickname(text,text) from public;
+grant execute on function public.cosmos_set_nickname(text,text) to authenticated;
+
+alter table public.profiles enable row level security;
+drop policy if exists "cosmos_profiles_owner_select" on public.profiles;
+drop policy if exists "cosmos_profiles_admin_select" on public.profiles;
+
+create policy "cosmos_profiles_owner_select"
+on public.profiles for select to authenticated
+using (id = auth.uid());
+
+create policy "cosmos_profiles_admin_select"
+on public.profiles for select to authenticated
+using (private.is_cosmos_admin());
+
+-- Session tracking: users can maintain only their own session rows;
+-- administrators can inspect session rows through RLS.
+alter table public.cosmos_sessions enable row level security;
+drop policy if exists "cosmos_sessions_owner_insert" on public.cosmos_sessions;
+drop policy if exists "cosmos_sessions_owner_update" on public.cosmos_sessions;
+drop policy if exists "cosmos_sessions_owner_select" on public.cosmos_sessions;
+drop policy if exists "cosmos_sessions_admin_select" on public.cosmos_sessions;
+
+create policy "cosmos_sessions_owner_insert"
+on public.cosmos_sessions for insert to authenticated
+with check (user_id = auth.uid());
+
+create policy "cosmos_sessions_owner_update"
+on public.cosmos_sessions for update to authenticated
+using (user_id = auth.uid())
+with check (user_id = auth.uid());
+
+create policy "cosmos_sessions_owner_select"
+on public.cosmos_sessions for select to authenticated
+using (user_id = auth.uid());
+
+create policy "cosmos_sessions_admin_select"
+on public.cosmos_sessions for select to authenticated
+using (private.is_cosmos_admin());
+
+-- Screen signaling is metadata only. Actual screen video remains WebRTC
+-- peer-to-peer and requires explicit browser screen-share approval.
+alter table public.cosmos_screen_signals enable row level security;
+drop policy if exists "cosmos_signal_insert" on public.cosmos_screen_signals;
+drop policy if exists "cosmos_signal_select" on public.cosmos_screen_signals;
+
+
+create policy "cosmos_signal_insert"
+on public.cosmos_screen_signals for insert to authenticated
+with check (sender_user_id = auth.uid());
+
+create policy "cosmos_signal_select"
+on public.cosmos_screen_signals for select to authenticated
+using (
+  sender_user_id = auth.uid()
+  or target_user_id = auth.uid()
+  or private.is_cosmos_admin()
+);
+
+-- Make sure Realtime can receive signaling changes.
+do $$
+begin
+  begin
+    alter publication supabase_realtime add table public.cosmos_screen_signals;
+  exception when duplicate_object then
+    null;
+  end;
+end $$;
+
+-- Optional verification RPC. It never returns the stored secret/hash.
+create or replace function public.cosmos_verify_local_identity(
+  target_local_profile_id text,
+  supplied_secret_hash text
+)
+returns boolean
+language sql
+security definer
+set search_path = public, private
+as $$
+  select exists(
+    select 1
+    from private.cosmos_identity_secrets s
+    where s.local_profile_id = target_local_profile_id
+      and s.secret_hash = supplied_secret_hash
+  );
+$$;
+
+revoke all on function public.cosmos_verify_local_identity(text,text) from public;
+grant execute on function public.cosmos_verify_local_identity(text,text) to authenticated;
+
+-- Prevent direct client access to the private schema through normal grants.
+revoke all on schema private from anon, authenticated;
+
+select 'Cosmos identity upgrade ready' as status;
