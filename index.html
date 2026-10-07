@@ -101,6 +101,17 @@ button:focus-visible,input:focus-visible{outline:2px solid #c4aaff;outline-offse
 .av{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none}
 .tip{position:relative;margin-top:1.6rem;font-size:12px;color:var(--dim);opacity:.85}
 
+/* Custom new tab page */
+#view .ntp{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;overflow:auto;
+  background:radial-gradient(60vmax 50vmax at 15% 10%,rgba(255,255,255,.3),transparent 60%),radial-gradient(50vmax 45vmax at 90% 95%,rgba(255,255,255,.18),transparent 60%),#000}
+#view .ntp.on{display:flex}
+.ntp h1{position:relative;margin:0 0 1.2rem;font-size:clamp(2.2rem,6vw,3.6rem);font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  background:linear-gradient(180deg,#fff 5%,#b9b9c3 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 0 28px rgba(255,255,255,.55))}
+.nfield{position:relative;display:flex;gap:8px;width:min(480px,100%);margin-bottom:1.6rem}
+.nin{flex:1;min-width:0;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:var(--text);font:inherit;font-size:15px;padding:0 16px;outline:0}
+.nin:focus{border-color:var(--violet);background:rgba(255,255,255,.12)}
+.nfield .pill{height:44px;border-radius:14px;padding:0 20px}
+
 /* Orb button is now a mini black hole */
 #orb{position:fixed;top:14px;right:14px;width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.4);cursor:pointer;z-index:70;padding:0;opacity:.9;--h:10px;
   background:#000;box-shadow:0 0 18px rgba(255,255,255,.55),inset 0 0 10px rgba(255,255,255,.12);
@@ -140,17 +151,12 @@ button:focus-visible,input:focus-visible{outline:2px solid #c4aaff;outline-offse
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .qgrid .t{padding:10px 4px 8px;border-radius:14px}
 .qgrid .av{width:30px;height:30px;border-radius:10px;font-size:13px}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);padding:3px;border-radius:12px;background:rgba(255,255,255,.07);gap:2px}
-.seg button{border:0;background:none;color:var(--dim);font-weight:600;font-size:12px;padding:8px 2px;border-radius:10px;cursor:pointer}
-.seg button.sel{background:linear-gradient(120deg,var(--violet),var(--fuchsia));color:#000}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 2px}
 .row small{color:var(--dim);display:block;font-size:11.5px;margin-top:1px}
 .sw{width:40px;height:23px;border-radius:999px;background:rgba(255,255,255,.18);border:0;position:relative;cursor:pointer;flex:none;transition:background .2s}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .2s}
 .sw.on{background:var(--violet)}
 .sw.on::after{transform:translateX(17px)}
-.kill{width:100%;margin-top:14px;border:0;border-radius:12px;padding:11px;font-weight:600;font-size:14px;cursor:pointer;background:rgba(255,92,110,.14);color:#ff8d99}
-.kill:hover{background:rgba(255,92,110,.26)}
 
 #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
 #stars i{position:absolute;border-radius:50%;background:#fff;animation:tw 4s ease-in-out infinite alternate}
@@ -191,7 +197,6 @@ button:focus-visible,input:focus-visible{outline:2px solid #c4aaff;outline-offse
   <h1>Welcome to Astra</h1>
   <p>Your window is ready. Pick a destination below, or open the menu with the black hole in the top corner to enter any site.</p>
   <div class="tiles" id="wtiles"></div>
-  <div class="tip">Tap the ` key twice to close this window instantly.</div>
 </div>
 
 <div id="scrim"></div>
@@ -202,7 +207,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #c4aaff;outline-offse
   <div class="field">
     <input id="addr" type="text" placeholder="Search or enter a site" spellcheck="false" autocomplete="off" aria-label="Address">
     <button class="pill" id="go">Go</button>
-    <button class="pill alt" id="nt" title="Open in a new tab" aria-label="Open in a new tab">+</button>
+    <button class="pill alt" id="nt" title="New tab" aria-label="New tab">+</button>
   </div>
   <div class="acts">
     <button class="act" id="home">Home</button>
@@ -213,24 +218,15 @@ button:focus-visible,input:focus-visible{outline:2px solid #c4aaff;outline-offse
   <div id="tablist"></div>
   <div class="h">Jump to</div>
   <div class="qgrid" id="quick"></div>
-  <div class="h">Window disguise</div>
-  <div class="seg" id="cloaks">
-    <button class="sel" data-t="Astra" data-c="#999999">Astra</button>
-    <button data-t="My Drive - Google Drive" data-c="#1fa463">Drive</button>
-    <button data-t="Classes" data-c="#188038">Classes</button>
-    <button data-t="Untitled document - Google Docs" data-c="#4285f4">Docs</button>
-  </div>
   <div class="h">Options</div>
-  <div class="row"><div>Compatibility mode<small>Try this if a site won't load</small></div><button class="sw" id="swFix" aria-label="Compatibility mode"></button></div>
-  <div class="row"><div>Panic key<small>Tap ` twice to close the window</small></div><button class="sw on" id="swPanic" aria-label="Panic key"></button></div>
-  <button class="kill" id="kill">Close session</button>
+  <div class="row"><div>CloudMoon Fix<small>Turn this on after signing up</small></div><button class="sw" id="swFix" aria-label="CloudMoon Fix"></button></div>
 </div>
 
 <script>
-var tabs=[],active=-1,fix=false,panic=true,lastKey=0;
+var tabs=[],active=-1,fix=false;
+var ALLOW='fullscreen; autoplay; clipboard-write; gamepad; microphone; camera; pointer-lock; keyboard-map';
 var COLORS=['#2b2b2b','#3a3a3a','#474747','#555','#333','#444'];
 var QUICK=[['CloudMoon','https://web.cloudmoonapp.com/'],['Google','https://www.google.com/'],['DuckDuckGo','https://duckduckgo.com/'],['YouTube','https://www.youtube.com/'],['Reddit','https://www.reddit.com/'],['Twitch','https://www.twitch.tv/']];
-var BH_ICON='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#000"/><g transform="rotate(-18 16 16)" fill="none" stroke="#fff"><ellipse cx="16" cy="16" rx="14" ry="3.8" stroke-width="1.7"/><circle cx="16" cy="16" r="6.4" fill="#000" stroke-width="1.1"/><path d="M2 16a14 3.8 0 0 0 28 0" stroke-width="2"/><path d="M7.6 16a8.4 8.4 0 0 1 16.8 0" stroke-opacity=".55" stroke-width="1.2"/></g></svg>');
 var $=function(i){return document.getElementById(i)};
 var view=$('view'),menu=$('menu'),scrim=$('scrim'),orb=$('orb'),addr=$('addr'),list=$('tablist');
 document.addEventListener('selectstart',function(e){var t=e.target;if(!t||!/^(INPUT|TEXTAREA)$/.test(t.tagName||''))e.preventDefault()});document.addEventListener('dragstart',function(e){e.preventDefault()});
@@ -280,14 +276,14 @@ function sandbox(f){
 function addTab(u){
   u=norm(u); if(!u) return;
   var f=document.createElement('iframe'),id='f'+Date.now()+Math.floor(Math.random()*99);
-  f.id=id; f.setAttribute('allow','fullscreen; autoplay; clipboard-write; gamepad; microphone; camera; pointer-lock; keyboard-map');
+  f.id=id; f.setAttribute('allow',ALLOW);
   sandbox(f); f.src=u; view.appendChild(f);
-  tabs.push({id:id,url:u,name:nameOf(u)});
+  tabs.push({id:id,url:u,name:nameOf(u),ntp:false});
   switchTab(tabs.length-1); setMenu(false);
 }
 function switchTab(i){
   active=i;
-  var fs=view.querySelectorAll('iframe');
+  var fs=view.children;
   for(var k=0;k<fs.length;k++) fs[k].classList.toggle('on',!!tabs[i]&&fs[k].id===tabs[i].id);
   $('welcome').style.display=i<0?'flex':'none';
   addr.value=tabs[i]?tabs[i].url:'';
@@ -313,23 +309,45 @@ function renderTabs(){
   });
 }
 function reload(){
-  if(active<0) return;
+  if(active<0||tabs[active].ntp) return;
   var f=$(tabs[active].id),s=f.src; f.src='about:blank'; setTimeout(function(){f.src=s},60); setMenu(false);
 }
-function setCloak(b){
-  document.title=b.dataset.t;
-  var l=document.querySelector('link[rel=icon]')||document.createElement('link');
-  l.rel='icon';
-  if(b.dataset.t==='Astra') l.href=BH_ICON;
-  else l.href='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="'+b.dataset.c+'"/></svg>');
-  document.head.appendChild(l);
-  var all=document.querySelectorAll('#cloaks button');
-  for(var k=0;k<all.length;k++) all[k].classList.toggle('sel',all[k]===b);
+function idxOf(id){for(var i=0;i<tabs.length;i++)if(tabs[i].id===id)return i;return -1}
+function navTab(i,u){
+  u=norm(u); if(!u||!tabs[i]) return;
+  var t=tabs[i],el=$(t.id);
+  if(t.ntp){
+    var f=document.createElement('iframe');f.id=t.id;
+    f.setAttribute('allow',ALLOW);sandbox(f);f.src=u;
+    view.replaceChild(f,el);t.ntp=false;
+  } else el.src=u;
+  t.url=u;t.name=nameOf(u);
+  switchTab(i);setMenu(false);
 }
-function go(newTab){
+function buildNTP(id){
+  var d=document.createElement('div');d.className='ntp';d.id=id;
+  d.innerHTML='<div class="mini" aria-hidden="true"><div class="bh"><div class="halo"></div><div class="dk b"></div><div class="ln"></div><div class="ar u"></div><div class="ar l"></div><div class="hl"></div><div class="dk f"></div></div></div><h1>Astra</h1><div class="nfield"><input class="nin" type="text" placeholder="Search or enter a site" spellcheck="false" autocomplete="off" aria-label="Address"><button class="pill nbtn">Go</button></div><div class="tiles"></div>';
+  var inp=d.querySelector('.nin'),btn=d.querySelector('.nbtn'),tl=d.querySelector('.tiles');
+  function sub(){if(!inp.value.trim()){inp.focus();return;}navTab(idxOf(id),inp.value)}
+  btn.onclick=sub;
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')sub()});
+  QUICK.forEach(function(q){
+    var b=document.createElement('button');b.className='t';
+    b.appendChild(avatar(q[0]));b.appendChild(document.createTextNode(q[0]));
+    b.onclick=function(){navTab(idxOf(id),q[1])};tl.appendChild(b);
+  });
+  return d;
+}
+function addNTP(){
+  var id='f'+Date.now()+Math.floor(Math.random()*99);
+  var d=buildNTP(id);view.appendChild(d);
+  tabs.push({id:id,url:'',name:'New tab',ntp:true});
+  switchTab(tabs.length-1);setMenu(false);
+  setTimeout(function(){d.querySelector('.nin').focus()},60);
+}
+function go(){
   var u=norm(addr.value); if(!u){addr.focus();return;}
-  if(active>=0&&!newTab){tabs[active].url=u;tabs[active].name=nameOf(u);$(tabs[active].id).src=u;renderTabs();setMenu(false);}
-  else addTab(u);
+  if(active>=0) navTab(active,u); else addTab(u);
 }
 function tile(q,parent){
   var b=document.createElement('button');b.className='t';
@@ -340,9 +358,9 @@ QUICK.forEach(function(q){tile(q,$('wtiles'));tile(q,$('quick'))});
 
 orb.onclick=function(){setMenu(!menu.classList.contains('open'))};
 scrim.onclick=function(){setMenu(false)};
-$('go').onclick=function(){go(false)};
-$('nt').onclick=function(){go(true)};
-addr.addEventListener('keydown',function(e){if(e.key==='Enter')go(false)});
+$('go').onclick=function(){go()};
+$('nt').onclick=addNTP;
+addr.addEventListener('keydown',function(e){if(e.key==='Enter')go()});
 $('home').onclick=function(){switchTab(-1);setMenu(false)};
 $('rl').onclick=reload;
 $('fs').onclick=function(){
@@ -350,18 +368,13 @@ $('fs').onclick=function(){
   if(d.fullscreenElement) d.exitFullscreen(); else if(el.requestFullscreen) el.requestFullscreen();
   setMenu(false);
 };
-var cl=document.querySelectorAll('#cloaks button');
-for(var j=0;j<cl.length;j++) cl[j].onclick=(function(b){return function(){setCloak(b)}})(cl[j]);
 $('swFix').onclick=function(){
   fix=!fix; this.classList.toggle('on',fix);
   var fs=view.querySelectorAll('iframe');
   for(var k=0;k<fs.length;k++){(function(f){var s=f.src;sandbox(f);f.src='about:blank';setTimeout(function(){f.src=s},60)})(fs[k]);}
 };
-$('swPanic').onclick=function(){panic=!panic;this.classList.toggle('on',panic)};
-$('kill').onclick=function(){window.close()};
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape') setMenu(false);
-  if(e.key==='`'&&panic){var n=Date.now();if(n-lastKey<500)window.close();lastKey=n;}
 });
 <\/script>
 </body>
