@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Astra</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%230a0b16'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23ffa53d'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23ffffff' stroke-opacity='.35'/%3E%3Ccircle cx='25' cy='10' r='2.4' fill='%234aa8ff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%230c0818'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23ffa53d'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23ffffff' stroke-opacity='.35'/%3E%3Ccircle cx='25' cy='10' r='2.4' fill='%234aa8ff'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0a0b16; --glass:rgba(255,255,255,.07); --edge:rgba(255,255,255,.14);
-  --text:#f6f2ff; --dim:#a7a3c8; --ember:#ff6a3d; --rose:#ff3d8b; --sky:#4aa8ff;
+  --ink:#0c0818; --glass:rgba(255,255,255,.07); --edge:rgba(255,255,255,.14);
+  --text:#f6f2ff; --dim:#a99fd1; --ember:#8b5cf6; --rose:#d946ef; --sky:#6366f1;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -24,17 +24,17 @@ body{
 .glow i:nth-child(3){width:28vmax;height:28vmax;left:42%;top:44%;background:var(--rose);opacity:.6;animation-delay:-12s}
 @keyframes drift{to{transform:translate(8vw,-6vh) scale(1.15)}}
 main{position:relative;z-index:1;width:min(560px,92vw);text-align:center}
-h1{font-size:clamp(3.6rem,12vw,6.6rem);font-weight:800;letter-spacing:-.05em;margin:0 0 2.2rem;line-height:1}
+h1{background:linear-gradient(180deg,#f1e9ff 5%,#a57dff 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 0 32px rgba(139,92,246,.6));font-size:clamp(3.6rem,12vw,6.6rem);font-weight:800;letter-spacing:-.05em;margin:0 0 2.2rem;line-height:1}
 .bar{
   display:flex;gap:.5rem;padding:.5rem;border-radius:999px;background:var(--glass);
   border:1px solid var(--edge);backdrop-filter:blur(18px);transition:border-color .25s,box-shadow .25s;
 }
-.bar:focus-within{border-color:var(--ember);box-shadow:0 0 0 4px rgba(255,106,61,.18)}
+.bar:focus-within{border-color:var(--ember);box-shadow:0 0 0 4px rgba(139,92,246,.24)}
 .bar input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:inherit;padding:.9rem 1.3rem;font-size:1.05rem}
 .bar input::placeholder{color:var(--dim)}
 .go{
   border:0;border-radius:999px;padding:0 1.9rem;font:inherit;font-weight:600;cursor:pointer;
-  color:#1a0a05;background:linear-gradient(120deg,#ffb15e,var(--ember) 55%,var(--rose));transition:transform .2s,filter .2s;
+  color:#fff;background:linear-gradient(120deg,#b79cff,var(--ember) 55%,var(--rose));transition:transform .2s,filter .2s;
 }
 .go:hover{transform:scale(1.04);filter:brightness(1.08)}
 .go:focus-visible,.chip:focus-visible{outline:2px solid var(--text);outline-offset:3px}
@@ -56,16 +56,15 @@ h1{font-size:clamp(3.6rem,12vw,6.6rem);font-weight:800;letter-spacing:-.05em;mar
 .system{position:absolute;left:50%;top:50%;width:0;height:0;z-index:0;pointer-events:none}
 h1,.bar,.chips,.note{position:relative;z-index:2}
 .sun{position:absolute;left:50%;top:50%;width:clamp(46px,8.5vmin,86px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);
-  background:radial-gradient(circle at 35% 32%,#fff6cf,#ffc04d 42%,#ff6a3d 82%);
+  background:radial-gradient(circle at 35% 32%,#fff6cf,#ffc04d 42%,#ff7a2f 82%);
   box-shadow:0 0 32px 10px rgba(255,160,60,.55),0 0 110px 36px rgba(255,106,61,.32);animation:pulse 5s ease-in-out infinite alternate}
 @keyframes pulse{to{box-shadow:0 0 44px 16px rgba(255,170,70,.65),0 0 140px 50px rgba(255,106,61,.4)}}
-.orbit{position:absolute;left:0;top:0;width:var(--d);height:var(--d);border:1px solid rgba(255,255,255,.09);border-radius:50%;
-  transform:translate(-50%,-50%) rotate(var(--a,0deg));animation:spin var(--t) linear infinite}
-@keyframes spin{to{transform:translate(-50%,-50%) rotate(calc(var(--a,0deg) + 360deg))}}
+.orbit{position:absolute;left:0;top:0;width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+  border:1px solid rgba(196,170,255,.14);border-radius:50%;animation:spin var(--t) linear infinite;animation-delay:calc(var(--t) * var(--p) * -1)}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .orbit i{position:absolute;top:0;left:50%;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;
   background:radial-gradient(circle at 32% 30%,#fff8,var(--c) 55%);box-shadow:0 0 10px var(--c)}
 .orbit .ring::after{content:"";position:absolute;left:50%;top:50%;width:230%;height:70%;border:2px solid rgba(255,225,170,.7);border-radius:50%;transform:translate(-50%,-50%) rotate(-22deg)}
-@media (prefers-reduced-motion:reduce){.glow i,.sun,.orbit,#stars i{animation:none}}
 
 </style>
 </head>
@@ -75,12 +74,12 @@ h1,.bar,.chips,.note{position:relative;z-index:2}
 <main>
   <div class="hero" aria-hidden="true"><div class="system">
     <div class="sun"></div>
-    <div class="orbit" style="--d:26vmin;--t:26s;--s:7px;--c:#b9b4c8;--a:20deg"><i></i></div>
-    <div class="orbit" style="--d:38vmin;--t:38s;--s:11px;--c:#ffcf7a;--a:140deg"><i></i></div>
-    <div class="orbit" style="--d:52vmin;--t:52s;--s:12px;--c:#4aa8ff;--a:260deg"><i></i></div>
-    <div class="orbit" style="--d:68vmin;--t:70s;--s:10px;--c:#ff5f4a;--a:60deg"><i></i></div>
-    <div class="orbit" style="--d:88vmin;--t:95s;--s:24px;--c:#ff9a5c;--a:200deg"><i></i></div>
-    <div class="orbit" style="--d:112vmin;--t:125s;--s:18px;--c:#f3d9a0;--a:310deg"><i class="ring"></i></div>
+    <div class="orbit" style="--d:26vmin;--t:26s;--s:7px;--c:#b9b4c8;--p:.06"><i></i></div>
+    <div class="orbit" style="--d:38vmin;--t:38s;--s:11px;--c:#ffcf7a;--p:.39"><i></i></div>
+    <div class="orbit" style="--d:52vmin;--t:52s;--s:12px;--c:#4aa8ff;--p:.72"><i></i></div>
+    <div class="orbit" style="--d:68vmin;--t:70s;--s:10px;--c:#ff5f4a;--p:.17"><i></i></div>
+    <div class="orbit" style="--d:88vmin;--t:95s;--s:24px;--c:#ff9a5c;--p:.56"><i></i></div>
+    <div class="orbit" style="--d:112vmin;--t:125s;--s:18px;--c:#f3d9a0;--p:.86"><i class="ring"></i></div>
   </div></div>
   <h1>Astra</h1>
   <div class="bar" id="bar">
@@ -104,13 +103,13 @@ h1,.bar,.chips,.note{position:relative;z-index:2}
 <title>Astra</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--glass:rgba(17,18,44,.82);--edge:rgba(255,255,255,.14);--text:#f2f3ff;--dim:#9a9dc8;--blue:#ff6a3d;--coral:#ff3d8b}
+:root{--glass:rgba(22,13,46,.86);--edge:rgba(255,255,255,.14);--text:#f2f3ff;--dim:#9a9dc8;--blue:#8b5cf6;--coral:#d946ef}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:#000;color:var(--text);font-family:'Outfit',system-ui,sans-serif;font-size:13px}
 #view{position:fixed;inset:0}
 #view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}
 #view iframe.on{display:block}
-#empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim);text-align:center;background:#0d0e24}
+#empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim);text-align:center;background:#0e0920}
 #empty b{display:block;font-size:2.4rem;font-weight:800;color:var(--text);letter-spacing:-.04em;margin-bottom:4px}
 
 #zone{position:fixed;top:0;left:50%;transform:translateX(-50%);width:220px;height:14px;z-index:20}
@@ -174,7 +173,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
     <div class="grid" id="quick"></div>
     <div class="h">Window disguise</div>
     <div class="seg" id="cloaks">
-      <button class="sel" data-t="Astra" data-c="#ff6a3d">Astra</button>
+      <button class="sel" data-t="Astra" data-c="#8b5cf6">Astra</button>
       <button data-t="My Drive - Google Drive" data-c="#1fa463">Drive</button>
       <button data-t="Classes" data-c="#188038">Classes</button>
       <button data-t="Untitled document - Google Docs" data-c="#4285f4">Docs</button>
@@ -189,7 +188,7 @@ button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 
 <script>
 var tabs=[],active=-1,fix=false,panic=true,lastKey=0,hideT=0,newMode=false;
-var COLORS=['#ff6a3d','#ff3d8b','#4aa8ff','#e5489d','#e0a100','#ffb15e'];
+var COLORS=['#8b5cf6','#d946ef','#4aa8ff','#e5489d','#e0a100','#ffb15e'];
 var QUICK=[['CloudMoon','https://web.cloudmoonapp.com/'],['Google','https://www.google.com/'],['DuckDuckGo','https://duckduckgo.com/'],['YouTube','https://www.youtube.com/']];
 var $=function(i){return document.getElementById(i)};
 var view=$('view'),tabsEl=$('tabs'),addr=$('addr'),menu=$('menu'),dock=$('dock'),zone=$('zone');
