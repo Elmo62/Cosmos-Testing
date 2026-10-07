@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kite</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23ff6a3d'/%3E%3Cpath d='M16 6l8 10-8 10-8-10z' fill='%23fff'/%3E%3C/svg%3E">
+<title>Astra</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%230a0b16'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23ffa53d'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23ffffff' stroke-opacity='.35'/%3E%3Ccircle cx='25' cy='10' r='2.4' fill='%234aa8ff'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -47,13 +47,42 @@ h1{font-size:clamp(3.6rem,12vw,6.6rem);font-weight:800;letter-spacing:-.05em;mar
 }
 .chip:hover{background:rgba(255,255,255,.14);border-color:var(--ember)}
 .note{margin-top:1.6rem;font-size:.8rem;color:var(--dim);min-height:1.2em}
-@media (prefers-reduced-motion:reduce){.glow i{animation:none}}
+
+.glow{opacity:.35!important}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+#stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;animation:tw 4s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.15}to{opacity:.9}}
+.hero{position:relative;height:clamp(120px,22vmin,210px);margin-bottom:.4rem}
+.system{position:absolute;left:50%;top:50%;width:0;height:0;z-index:0;pointer-events:none}
+h1,.bar,.chips,.note{position:relative;z-index:2}
+.sun{position:absolute;left:50%;top:50%;width:clamp(46px,8.5vmin,86px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 35% 32%,#fff6cf,#ffc04d 42%,#ff6a3d 82%);
+  box-shadow:0 0 32px 10px rgba(255,160,60,.55),0 0 110px 36px rgba(255,106,61,.32);animation:pulse 5s ease-in-out infinite alternate}
+@keyframes pulse{to{box-shadow:0 0 44px 16px rgba(255,170,70,.65),0 0 140px 50px rgba(255,106,61,.4)}}
+.orbit{position:absolute;left:0;top:0;width:var(--d);height:var(--d);border:1px solid rgba(255,255,255,.09);border-radius:50%;
+  transform:translate(-50%,-50%) rotate(var(--a,0deg));animation:spin var(--t) linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(calc(var(--a,0deg) + 360deg))}}
+.orbit i{position:absolute;top:0;left:50%;width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,#fff8,var(--c) 55%);box-shadow:0 0 10px var(--c)}
+.orbit .ring::after{content:"";position:absolute;left:50%;top:50%;width:230%;height:70%;border:2px solid rgba(255,225,170,.7);border-radius:50%;transform:translate(-50%,-50%) rotate(-22deg)}
+@media (prefers-reduced-motion:reduce){.glow i,.sun,.orbit,#stars i{animation:none}}
+
 </style>
 </head>
 <body>
 <div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+<div id="stars" aria-hidden="true"></div>
 <main>
-  <h1>Kite</h1>
+  <div class="hero" aria-hidden="true"><div class="system">
+    <div class="sun"></div>
+    <div class="orbit" style="--d:26vmin;--t:26s;--s:7px;--c:#b9b4c8;--a:20deg"><i></i></div>
+    <div class="orbit" style="--d:38vmin;--t:38s;--s:11px;--c:#ffcf7a;--a:140deg"><i></i></div>
+    <div class="orbit" style="--d:52vmin;--t:52s;--s:12px;--c:#4aa8ff;--a:260deg"><i></i></div>
+    <div class="orbit" style="--d:68vmin;--t:70s;--s:10px;--c:#ff5f4a;--a:60deg"><i></i></div>
+    <div class="orbit" style="--d:88vmin;--t:95s;--s:24px;--c:#ff9a5c;--a:200deg"><i></i></div>
+    <div class="orbit" style="--d:112vmin;--t:125s;--s:18px;--c:#f3d9a0;--a:310deg"><i class="ring"></i></div>
+  </div></div>
+  <h1>Astra</h1>
   <div class="bar" id="bar">
     <input id="pageInput" type="text" placeholder="Enter a site or search..." spellcheck="false" autocomplete="off" aria-label="Destination">
     <button class="go" id="goBtn">Launch</button>
@@ -72,91 +101,96 @@ h1{font-size:clamp(3.6rem,12vw,6.6rem);font-weight:800;letter-spacing:-.05em;mar
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Kite</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+<title>Astra</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#000;--dock:rgba(16,17,34,.94);--edge:rgba(255,255,255,.16);--text:#f6f2ff;--dim:#a7a3c8;--ember:#ff6a3d}
+:root{--glass:rgba(17,18,44,.82);--edge:rgba(255,255,255,.14);--text:#f2f3ff;--dim:#9a9dc8;--blue:#ff6a3d;--coral:#ff3d8b}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:#000;color:var(--text);font-family:'Outfit',system-ui,sans-serif;font-size:13px}
 #view{position:fixed;inset:0}
 #view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff;display:none}
 #view iframe.on{display:block}
-#empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim);text-align:center}
-#empty b{display:block;font-size:2.2rem;color:var(--text);font-weight:600;margin-bottom:4px}
+#empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim);text-align:center;background:#0d0e24}
+#empty b{display:block;font-size:2.4rem;font-weight:800;color:var(--text);letter-spacing:-.04em;margin-bottom:4px}
 
-/* hover zone + grip: tiny and nearly invisible so the game keeps the screen */
-#zone{position:fixed;top:0;left:50%;transform:translateX(-50%);width:200px;height:12px;z-index:20}
-#grip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:56px;height:5px;border-radius:0 0 6px 6px;background:rgba(255,255,255,.28);transition:opacity .2s}
-#zone:hover #grip,#dock.show ~ #zone #grip{opacity:0}
+#zone{position:fixed;top:0;left:50%;transform:translateX(-50%);width:220px;height:14px;z-index:20}
+#grip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:48px;height:4px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--blue),var(--coral));opacity:.55;transition:opacity .2s}
 
-#dock{position:fixed;top:8px;left:50%;width:min(680px,94vw);transform:translate(-50%,-140%);opacity:0;pointer-events:none;
-  display:flex;align-items:center;gap:6px;padding:6px;border-radius:16px;background:var(--dock);border:1px solid var(--edge);
-  backdrop-filter:blur(14px);z-index:30;transition:transform .22s ease,opacity .22s ease}
+#dock{position:fixed;top:10px;left:50%;width:min(720px,94vw);transform:translate(-50%,-150%);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);
+  backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:30;transition:transform .25s cubic-bezier(.2,.9,.3,1),opacity .2s}
 #dock.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
-#tabs{display:flex;gap:4px;max-width:38%;overflow-x:auto;scrollbar-width:none}
-.tab{display:flex;align-items:center;gap:4px;height:28px;padding:0 4px 0 10px;border-radius:9px;color:var(--dim);cursor:pointer;flex:none;max-width:110px}
-.tab.on{background:rgba(255,255,255,.12);color:var(--text)}
+.mark{width:28px;height:28px;border-radius:10px;background:var(--blue);position:relative;flex:none;margin-left:2px}
+.mark::before{content:"";position:absolute;inset:9px;border-radius:50%;background:#fff}
+.mark::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--coral)}
+#tabs{display:flex;gap:4px;max-width:34%;overflow-x:auto;scrollbar-width:none}
+.tab{display:flex;align-items:center;gap:6px;height:30px;padding:0 4px 0 4px;border-radius:999px;color:var(--dim);cursor:pointer;flex:none;max-width:120px;transition:background .15s}
 .tab:hover{background:rgba(255,255,255,.08)}
-.tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.x{border:0;background:none;color:inherit;font-size:14px;width:18px;height:18px;border-radius:50%;cursor:pointer;padding:0}
-.x:hover{background:rgba(255,92,122,.3)}
-.ib{border:0;background:none;color:var(--text);width:28px;height:28px;border-radius:9px;cursor:pointer;font-size:15px;flex:none}
-.ib:hover{background:rgba(255,255,255,.1)}
-#addr{flex:1;min-width:60px;height:28px;border-radius:9px;border:1px solid transparent;background:rgba(255,255,255,.07);color:var(--text);font:inherit;padding:0 12px;outline:0}
-#addr:focus{border-color:var(--ember)}
-button:focus-visible{outline:2px solid var(--ember)}
+.tab.on{background:rgba(255,255,255,.14);color:var(--text)}
+.av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex:none}
+.tab span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.x{border:0;background:none;color:inherit;width:18px;height:18px;border-radius:50%;cursor:pointer;padding:0;font-size:14px;line-height:1;opacity:.6}
+.x:hover{background:rgba(255,92,110,.35);opacity:1}
+.ib{border:0;background:none;color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;display:grid;place-items:center;flex:none;transition:background .15s}
+.ib:hover{background:rgba(255,255,255,.12)}
+.addr{flex:1;min-width:80px;display:flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid transparent;color:var(--dim)}
+.addr:focus-within{border-color:var(--blue);background:rgba(255,255,255,.12);color:var(--text)}
+#addr{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--text);font:inherit}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 
-#menu{position:absolute;top:calc(100% + 8px);right:0;width:260px;padding:14px;border-radius:16px;background:var(--dock);border:1px solid var(--edge);display:none}
+#menu{position:absolute;top:calc(100% + 10px);right:0;width:290px;padding:16px;border-radius:24px;background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(20px);box-shadow:0 18px 50px rgba(0,0,0,.45);display:none}
 #menu.open{display:block}
-.h{color:var(--dim);margin:12px 0 6px;font-weight:600}
+.h{color:var(--dim);margin:14px 2px 8px;font-weight:600}
 .h:first-child{margin-top:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.m{border:1px solid var(--edge);background:rgba(255,255,255,.06);color:var(--text);font:inherit;padding:8px 10px;border-radius:10px;cursor:pointer;text-align:left}
-.m:hover,.m.sel{border-color:var(--ember)}
-.m.sel{background:rgba(255,106,61,.15)}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0}
-.row small{color:var(--dim);display:block}
-.sw{width:36px;height:20px;border-radius:999px;background:#2b2d4e;border:0;position:relative;cursor:pointer;flex:none}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
-.sw.on{background:var(--ember)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.q{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:rgba(255,255,255,.07);color:var(--text);font:inherit;font-size:11px;font-weight:600;padding:10px 2px;border-radius:14px;cursor:pointer;transition:background .15s}
+.q:hover{background:rgba(255,255,255,.15)}
+.seg{display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.07);gap:2px}
+.seg button{flex:1;border:0;background:none;color:var(--dim);font:inherit;font-weight:600;font-size:12px;padding:7px 4px;border-radius:999px;cursor:pointer}
+.seg button.sel{background:var(--blue);color:#fff}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 2px}
+.row small{color:var(--dim);display:block;font-size:11px;margin-top:1px}
+.sw{width:38px;height:22px;border-radius:999px;background:rgba(255,255,255,.18);border:0;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw.on{background:var(--blue)}
 .sw.on::after{transform:translateX(16px)}
-.kill{width:100%;margin-top:10px;border:1px solid rgba(255,92,122,.4);background:rgba(255,92,122,.1);color:#ff8fa8;padding:8px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.kill{width:100%;margin-top:12px;border:0;background:rgba(255,92,110,.14);color:#ff8d99;padding:10px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer}
+.kill:hover{background:rgba(255,92,110,.26)}
 </style>
 </head>
 <body>
-<div id="view"><div id="empty"><div><b>Kite</b>Move to the top edge to open a tab.</div></div></div>
+<div id="view"><div id="empty"><div><b>Astra</b>Move to the top edge to open a tab.</div></div></div>
 
 <div id="dock">
+  <div class="mark"></div>
   <div id="tabs"></div>
-  <button class="ib" id="plus" title="New tab" aria-label="New tab">+</button>
-  <input id="addr" type="text" placeholder="Site or search..." spellcheck="false" autocomplete="off" aria-label="Address">
-  <button class="ib" id="rl" title="Reload" aria-label="Reload">&#8635;</button>
-  <button class="ib" id="mb" title="Menu" aria-label="Menu">&#8943;</button>
+  <button class="ib" id="plus" title="New tab" aria-label="New tab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <label class="addr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="addr" type="text" placeholder="Search or enter a site" spellcheck="false" autocomplete="off" aria-label="Address"></label>
+  <button class="ib" id="rl" title="Reload" aria-label="Reload"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+  <button class="ib" id="mb" title="Menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button>
+
   <div id="menu">
-    <div class="h">Quick links</div>
-    <div class="grid">
-      <button class="m" data-u="https://web.cloudmoonapp.com/">CloudMoon</button>
-      <button class="m" data-u="https://www.google.com/">Google</button>
-      <button class="m" data-u="https://duckduckgo.com/">DuckDuckGo</button>
-      <button class="m" data-u="https://www.youtube.com/">YouTube</button>
-    </div>
-    <div class="h">Window title</div>
-    <div class="grid" id="cloaks">
-      <button class="m sel" data-t="Kite" data-c="#ff6a3d">Kite</button>
-      <button class="m" data-t="My Drive - Google Drive" data-c="#1fa463">Drive</button>
-      <button class="m" data-t="Classes" data-c="#188038">Classroom</button>
-      <button class="m" data-t="Untitled document - Google Docs" data-c="#4285f4">Docs</button>
+    <div class="h">Jump to</div>
+    <div class="grid" id="quick"></div>
+    <div class="h">Window disguise</div>
+    <div class="seg" id="cloaks">
+      <button class="sel" data-t="Astra" data-c="#ff6a3d">Astra</button>
+      <button data-t="My Drive - Google Drive" data-c="#1fa463">Drive</button>
+      <button data-t="Classes" data-c="#188038">Classes</button>
+      <button data-t="Untitled document - Google Docs" data-c="#4285f4">Docs</button>
     </div>
     <div class="h">Options</div>
-    <div class="row"><div>Compatibility mode<small>Try this if a site won't load.</small></div><button class="sw" id="swFix" aria-label="Compatibility mode"></button></div>
-    <div class="row"><div>Panic key<small>Tap ` twice to close.</small></div><button class="sw on" id="swPanic" aria-label="Panic key"></button></div>
+    <div class="row"><div>Compatibility mode<small>Try this if a site won't load</small></div><button class="sw" id="swFix" aria-label="Compatibility mode"></button></div>
+    <div class="row"><div>Panic key<small>Tap ` twice to close</small></div><button class="sw on" id="swPanic" aria-label="Panic key"></button></div>
     <button class="kill" id="kill">Close session</button>
   </div>
 </div>
 <div id="zone"><div id="grip"></div></div>
 
 <script>
-var tabs=[],active=-1,fix=false,panic=true,lastKey=0,hideT=0;
+var tabs=[],active=-1,fix=false,panic=true,lastKey=0,hideT=0,newMode=false;
+var COLORS=['#ff6a3d','#ff3d8b','#4aa8ff','#e5489d','#e0a100','#ffb15e'];
+var QUICK=[['CloudMoon','https://web.cloudmoonapp.com/'],['Google','https://www.google.com/'],['DuckDuckGo','https://duckduckgo.com/'],['YouTube','https://www.youtube.com/']];
 var $=function(i){return document.getElementById(i)};
 var view=$('view'),tabsEl=$('tabs'),addr=$('addr'),menu=$('menu'),dock=$('dock'),zone=$('zone');
 
@@ -166,13 +200,13 @@ function hideDock(){
   hideT=setTimeout(function(){
     if(document.activeElement===addr||menu.classList.contains('open')) return;
     dock.classList.remove('show');
-  },450);
+  },500);
 }
 zone.addEventListener('mouseenter',showDock);
 zone.addEventListener('click',showDock);
+zone.addEventListener('mouseleave',hideDock);
 dock.addEventListener('mouseenter',showDock);
 dock.addEventListener('mouseleave',hideDock);
-zone.addEventListener('mouseleave',hideDock);
 addr.addEventListener('blur',hideDock);
 
 function norm(v){
@@ -187,6 +221,7 @@ function nameOf(u){
     return h.charAt(0).toUpperCase()+h.slice(1);
   }catch(e){return 'New tab';}
 }
+function colorOf(s){var n=0;for(var i=0;i<s.length;i++)n+=s.charCodeAt(i);return COLORS[n%COLORS.length]}
 function sandbox(f){
   if(fix) f.setAttribute('sandbox','allow-forms allow-scripts allow-same-origin allow-popups');
   else f.removeAttribute('sandbox');
@@ -215,15 +250,19 @@ function closeTab(e,i){
   if(!tabs.length) switchTab(-1);
   else switchTab(Math.max(0,Math.min(active>=i?active-1:active,tabs.length-1)));
 }
+function avatar(name){
+  var a=document.createElement('span'); a.className='av'; a.style.background=colorOf(name);
+  a.textContent=name.charAt(0).toUpperCase(); return a;
+}
 function render(){
   tabsEl.innerHTML='';
   tabs.forEach(function(t,i){
     var d=document.createElement('div'); d.className='tab'+(i===active?' on':'');
-    var s=document.createElement('span'); s.textContent=t.name;
+    var s=document.createElement('span'); s.className='n'; s.textContent=t.name;
     var x=document.createElement('button'); x.className='x'; x.textContent='\u00d7'; x.setAttribute('aria-label','Close tab');
     x.onclick=function(e){closeTab(e,i)};
     d.onclick=function(){switchTab(i)};
-    d.appendChild(s); d.appendChild(x); tabsEl.appendChild(d);
+    d.appendChild(avatar(t.name)); d.appendChild(s); d.appendChild(x); tabsEl.appendChild(d);
   });
 }
 function reload(){
@@ -236,11 +275,17 @@ function setCloak(b){
   l.rel='icon';
   l.href='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="'+b.dataset.c+'"/></svg>');
   document.head.appendChild(l);
-  var all=document.querySelectorAll('#cloaks .m');
+  var all=document.querySelectorAll('#cloaks button');
   for(var k=0;k<all.length;k++) all[k].classList.toggle('sel',all[k]===b);
 }
 
-var newMode=false;
+QUICK.forEach(function(q){
+  var b=document.createElement('button'); b.className='q';
+  var a=avatar(q[0]); a.style.width='30px'; a.style.height='30px'; a.style.fontSize='13px';
+  b.appendChild(a); b.appendChild(document.createTextNode(q[0]));
+  b.onclick=function(){addTab(q[1]);menu.classList.remove('open')};
+  $('quick').appendChild(b);
+});
 $('plus').onclick=function(){newMode=true;addr.value='';addr.focus()};
 $('rl').onclick=reload;
 $('mb').onclick=function(){menu.classList.toggle('open');if(!menu.classList.contains('open'))hideDock()};
@@ -251,12 +296,8 @@ addr.addEventListener('keydown',function(e){
   else{addTab(u);newMode=false;}
 });
 addr.addEventListener('blur',function(){setTimeout(function(){newMode=false},250)});
-
-var links=menu.querySelectorAll('[data-u]');
-for(var k=0;k<links.length;k++) links[k].onclick=(function(b){return function(){addTab(b.dataset.u);menu.classList.remove('open')}})(links[k]);
-var cl=document.querySelectorAll('#cloaks .m');
+var cl=document.querySelectorAll('#cloaks button');
 for(var j=0;j<cl.length;j++) cl[j].onclick=(function(b){return function(){setCloak(b)}})(cl[j]);
-
 $('swFix').onclick=function(){
   fix=!fix; this.classList.toggle('on',fix);
   var fs=view.querySelectorAll('iframe');
@@ -286,7 +327,7 @@ addTab(__START__);
   function launch(raw){
     var url=norm(raw);
     if(!url){bar.classList.remove('err');void bar.offsetWidth;bar.classList.add('err');input.focus();return;}
-    var popup=window.open('about:blank','KiteSession','width=1280,height=720');
+    var popup=window.open('about:blank','AstraSession','width=1280,height=720');
     if(!popup){note.textContent='Pop-up blocked. Allow pop-ups for this page, then try again.';return;}
     var closeTag='<'+'/script>';
     var html=document.getElementById('session-src').textContent
@@ -302,6 +343,13 @@ addTab(__START__);
   var chips=document.querySelectorAll('.chip');
   for(var i=0;i<chips.length;i++) chips[i].onclick=(function(c){return function(){launch(c.dataset.u)}})(chips[i]);
 })();
+</script>
+<script>
+(function(){var s=document.getElementById('stars'),n=80;
+for(var i=0;i<n;i++){var d=document.createElement('i');
+d.style.left=(Math.random()*100)+'%';d.style.top=(Math.random()*100)+'%';
+var z=Math.random()<.2?3:2;d.style.width=d.style.height=z+'px';
+d.style.animationDelay=(-Math.random()*4)+'s';d.style.animationDuration=(3+Math.random()*4)+'s';s.appendChild(d);}})();
 </script>
 </body>
 </html>
