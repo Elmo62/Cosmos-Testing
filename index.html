@@ -1,204 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Cosmos</title>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--bg:#000;--pill:#1a1a1a;--white:#fff;--muted:#777;--line:#252525;--panel:rgba(10,10,10,.97)}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--white);font-family:Comfortaa,cursive}body{display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.disclaimer-banner{position:absolute;top:20px;right:25px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:10px 18px;border-radius:100px;font-size:.72rem;color:#888;backdrop-filter:blur(10px);z-index:10}
-.main-ui{text-align:center}.main-ui h1{font-size:4rem;letter-spacing:-2px;margin:0 0 2rem}.main-input{background:var(--pill);border:2px solid #222;padding:1.2rem 2.5rem;color:#fff;width:420px;max-width:80vw;outline:none;border-radius:100px;text-align:center;font-size:1rem}.main-input:focus{border-color:#444}.launch-btn{margin-top:2rem;background:#fff;color:#000;border:0;padding:1.2rem 4rem;cursor:pointer;font-weight:700;border-radius:100px;transition:.2s}.launch-btn:hover{transform:scale(1.04);background:#eee}
-.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:500000;backdrop-filter:blur(18px)}.auth-card{width:min(410px,90vw);background:#0b0b0b;border:1px solid #252525;border-radius:24px;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.6)}.auth-card h2{margin:0 0 8px}.auth-card p{color:#777;font-size:.78rem;line-height:1.5}.auth-card input{width:100%;background:#151515;border:1px solid #292929;color:#fff;padding:13px 16px;border-radius:14px;outline:0;margin:6px 0}.auth-btn{width:100%;padding:13px;border:0;border-radius:14px;margin-top:8px;font-weight:700;cursor:pointer}.primary{background:#fff;color:#000}.secondary{background:#181818;color:#fff}.auth-error{color:#ff6b6b;min-height:18px;font-size:.72rem;margin-top:8px}.auth-note{font-size:.68rem!important;color:#555!important}.identity-card{background:#0f0f0f;border:1px solid #292929;border-radius:15px;padding:13px;margin:14px 0}.identity-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.identity-label{font-size:.58rem;color:#555;text-transform:uppercase;letter-spacing:1px}.identity-value{font-size:.8rem;letter-spacing:1px;word-break:break-all;margin-top:5px}.mini-btn{background:#181818;color:#fff;border:1px solid #2b2b2b;border-radius:10px;padding:8px 10px;cursor:pointer;font:700 .62rem Comfortaa,cursive}.mini-btn:hover{background:#fff;color:#000}.secure-pill{display:inline-flex;align-items:center;gap:5px;font-size:.58rem;color:#777;border:1px solid #292929;padding:5px 8px;border-radius:999px;margin-top:9px}.hidden{display:none!important}.toast{position:fixed;left:18px;bottom:18px;background:#111;border:1px solid #292929;color:#fff;border-radius:13px;padding:11px 14px;font-size:.68rem;z-index:900000;box-shadow:0 15px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}
-/* Session UI */
-.session-body{overflow:hidden}.session-body #view-container{width:100%;height:100%;position:relative}.session-body iframe{width:100%;height:100%;border:0;background:#fff;position:absolute;inset:0;display:none}.session-body iframe.active{display:block}
-#ghostTrigger{position:fixed;right:15px;top:15px;width:42px;height:42px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);border-radius:13px;z-index:10005;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s}#ghostTrigger:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}.dot{width:4px;height:4px;background:#fff;border-radius:50%;margin:0 1.5px}
-#panel{position:fixed;top:15px;right:-390px;width:360px;height:calc(100% - 30px);background:var(--panel);transition:.38s cubic-bezier(.16,1,.3,1);z-index:10001;padding:24px;display:flex;flex-direction:column;backdrop-filter:blur(20px);border:1px solid #222;border-radius:22px;overflow-y:auto;box-shadow:0 25px 80px rgba(0,0,0,.55)}#panel.open{right:15px}
-.menu-head{display:flex;justify-content:space-between;align-items:center}.menu-title{font-weight:700;font-size:1.35rem}.role-pill{font-size:.6rem;color:#777;border:1px solid #292929;padding:5px 8px;border-radius:999px}.label{font-size:.65rem;color:#555;text-transform:uppercase;margin:15px 0 6px 5px;letter-spacing:1px}.btn,input{font-family:inherit}.panel-input{background:#151515;border:1px solid #222;color:#fff;padding:12px 16px;border-radius:100px;outline:0;width:100%;margin-bottom:8px}.btn{padding:12px;background:#1a1a1a;color:#fff;border:0;border-radius:100px;cursor:pointer;font-weight:700;width:100%;margin-bottom:8px;transition:.18s}.btn:hover{background:#fff;color:#000}.btn:disabled{opacity:.45;cursor:not-allowed}.danger{background:#300!important;color:#f66!important}.tab-item{background:#111;padding:12px 15px;border-radius:12px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;border:1px solid #222}.tab-item.active{border-color:#555;background:#1a1a1a}.tab-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}.close-x{color:#555;font-weight:700;padding:0 5px}.close-x:hover{color:#f55}.admin-box{border:1px solid #292929;background:#0d0d0d;border-radius:16px;padding:12px}.admin-status{font-size:.7rem;color:#777;margin-bottom:8px}.screen-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.screen-actions .btn{margin:0}.screen-preview{width:100%;background:#000;border-radius:12px;border:1px solid #333;margin-top:10px;overflow:hidden;display:none}.screen-preview video{width:100%;display:block;background:#000;max-height:260px}.screen-preview .btn{margin:6px}.share-card{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10010;background:#0c0c0c;border:1px solid #333;border-radius:18px;padding:14px 16px;display:none;box-shadow:0 20px 60px rgba(0,0,0,.7);width:min(430px,90vw)}.share-card.show{display:block}.share-card b{font-size:.8rem}.share-card p{font-size:.67rem;color:#777;line-height:1.45;margin:6px 0 10px}.share-card .row{display:flex;gap:7px}.share-card .row .btn{margin:0}.corner-nav{position:fixed;right:39px;bottom:15px;z-index:10006;display:none}.corner-nav>button{width:42px;height:42px;border-radius:13px 13px 13px 0;background:#111;border:1px solid #2b2b2b;color:#fff;cursor:pointer;font-size:18px;box-shadow:0 10px 30px rgba(0,0,0,.4)}.corner-nav.open{display:block}.quick-nav{position:absolute;right:0;bottom:50px;width:150px;background:#0d0d0d;border:1px solid #292929;border-radius:15px;padding:7px;display:none;box-shadow:0 15px 40px rgba(0,0,0,.6)}.quick-nav.open{display:grid}.quick-nav button{width:100%;height:34px;border-radius:9px;background:#171717;border:0;color:#fff;font-family:inherit;font-size:.68rem;cursor:pointer;margin:0 0 5px}.quick-nav button:last-child{margin-bottom:0}.quick-nav button:hover{background:#fff;color:#000}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmos | Launch</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #000000; --pill: #1a1a1a; --white: #ffffff; }
+    body {
+      background: var(--bg); color: var(--white);
+      font-family: 'Comfortaa', cursive;
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; height: 100vh; margin: 0; overflow: hidden;
+    }
+    .main-ui { text-align: center; }
+    h1 { font-weight: 700; letter-spacing: -2px; margin-bottom: 2rem; font-size: 4rem; opacity: 0.9; }
+    .main-input {
+      background: var(--pill); border: 2px solid #222; padding: 1.2rem 2.5rem;
+      color: #fff; width: 420px; outline: none; border-radius: 100px;
+      transition: all 0.4s ease; text-align: center; font-size: 1rem;
+    }
+    .main-input:focus { border-color: #444; }
+    .launch-btn {
+      margin-top: 2rem; background: var(--white); color: #000; border: none;
+      padding: 1.2rem 4rem; cursor: pointer; font-weight: 700;
+      border-radius: 100px; transition: 0.3s;
+    }
+    .launch-btn:hover { transform: scale(1.05); background: #eee; }
+  </style>
 </head>
 <body>
-<div id="authOverlay" class="auth-overlay">
-  <div class="auth-card">
-    <h2>Cosmos</h2>
-    <p id="authMessage">Creating your anonymous profile…</p>
-    <div id="identityCard" class="identity-card hidden"><div class="identity-row"><div><div class="identity-label">Local Profile ID</div><div id="localProfileId" class="identity-value">—</div></div><button id="copyIdBtn" class="mini-btn" type="button">Copy ID</button></div><div class="secure-pill">● Secret protected locally · never displayed</div></div>
-    <div id="authError" class="auth-error"></div>
-    <p class="auth-note">No email, password, or signup form. Your profile receives a random ID. Only database-authorized admins can assign nicknames.</p>
+
+  <div class="main-ui">
+    <h1>Cosmos</h1>
+    <input id="pageInput" class="main-input" type="text" placeholder="destination..." spellcheck="false">
+    <br>
+    <button class="launch-btn" onclick="openSession();">Open Session</button>
   </div>
-</div>
-<div class="disclaimer-banner">Sessions and gameplay may be viewed by authorized administrators for moderation.</div>
-<div class="main-ui">
-  <h1>Cosmos</h1><div id="profileBadge" style="color:#777;font-size:.72rem;margin:-20px 0 22px">Profile: connecting…</div><input id="pageInput" class="main-input" type="text" placeholder="destination..." spellcheck="false"><br>
-  <button class="launch-btn" id="launchBtn">Open Session</button>
-  <div id="connectionStatus" style="color:#555;font-size:.62rem;margin-top:14px">Connecting…</div>
-</div>
-<div id="toast" class="toast"></div>
-<script>
-const SUPABASE_URL='https://tnmylpspcwrhcwvqrdja.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_AHv04bTmu2o9CZzMt3M2XQ_duxuA8eN';
-const cosmosSb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'cosmos-auth-v2'}});
-const $=id=>document.getElementById(id);
-const LOCAL_ID_KEY='cosmos.profile.id.v2';
-const LOCAL_META_KEY='cosmos.profile.meta.v2';
-const LOCAL_DB='cosmos-local-v2';
-let localIdentity=null;
-let accountHeartbeatTimer=null;
-let renewingAnonymousAccount=false;
-function setAuthError(m){$('authError').textContent=m||''}
-function toast(message){const el=$('toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
-function randomLetters(length=32){const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';const bytes=new Uint8Array(length);crypto.getRandomValues(bytes);let out='';for(const b of bytes)out+=alphabet[b%alphabet.length];return out}
-function randomProfileId(length=12){const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const bytes=new Uint8Array(length);crypto.getRandomValues(bytes);let out='';for(const b of bytes)out+=alphabet[b%alphabet.length];return out}
-async function sha256(text){const data=new TextEncoder().encode(text);const digest=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('')}
-function idbOpen(){return new Promise((resolve,reject)=>{const req=indexedDB.open(LOCAL_DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('keys'))req.result.createObjectStore('keys')};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-async function getDeviceKey(){try{const db=await idbOpen();const key=await new Promise((resolve,reject)=>{const tx=db.transaction('keys','readonly');const r=tx.objectStore('keys').get('device');r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)});if(key)return key;const created=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']);await new Promise((resolve,reject)=>{const tx=db.transaction('keys','readwrite');tx.objectStore('keys').put(created,'device');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});return created}catch{return null}}
-function bytesToB64(bytes){let s='';for(const b of bytes)s+=String.fromCharCode(b);return btoa(s)}
-function b64ToBytes(s){const raw=atob(s);return Uint8Array.from(raw,c=>c.charCodeAt(0))}
-async function protectSecret(secret){const key=await getDeviceKey();if(!key)return null;const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(secret));return {iv:bytesToB64(iv),cipher:bytesToB64(new Uint8Array(cipher))}}
-async function unprotectSecret(meta){try{const key=await getDeviceKey();if(!key||!meta?.iv||!meta?.cipher)return null;const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64ToBytes(meta.iv)},key,b64ToBytes(meta.cipher));return new TextDecoder().decode(plain)}catch{return null}}
-async function loadOrCreateLocalIdentity(){
-  const existingId=localStorage.getItem(LOCAL_ID_KEY);
-  const existingMeta=(()=>{try{return JSON.parse(localStorage.getItem(LOCAL_META_KEY)||'null')}catch{return null}})();
-  if(existingId&&existingMeta){const secret=await unprotectSecret(existingMeta);if(secret)return {id:existingId,secret,verifier:existingMeta.verifier,createdAt:existingMeta.createdAt}}
-  const id=existingId||randomProfileId();
-  const secret=randomLetters(36);
-  const verifier=await sha256(secret);
-  const protectedSecret=await protectSecret(secret);
-  localStorage.setItem(LOCAL_ID_KEY,id);
-  localStorage.setItem(LOCAL_META_KEY,JSON.stringify({version:2,verifier,iv:protectedSecret?.iv||null,cipher:protectedSecret?.cipher||null,createdAt:new Date().toISOString()}));
-  return {id,secret,verifier,createdAt:new Date().toISOString()};
-}
-async function registerLocalIdentity(){
-  if(!localIdentity)return false;
-  const {data,error}=await cosmosSb.rpc('cosmos_register_local_identity',{local_profile_id:localIdentity.id,secret_hash:localIdentity.verifier});
-  if(error){console.warn('Local identity registration:',error.message);return false}
-  if(data!==true){
-    localStorage.removeItem(LOCAL_ID_KEY);localStorage.removeItem(LOCAL_META_KEY);localIdentity=null;
-    return false;
-  }
-  return true;
-}
-async function finishAuth(){
-  const {data:{user},error:userError}=await cosmosSb.auth.getUser();
-  if(userError||!user){setAuthError('Could not load your profile. Please refresh.');return false;}
-  localIdentity=await loadOrCreateLocalIdentity();
-  if(!(await registerLocalIdentity())){setAuthError('Your local identity could not be verified. Clear the Cosmos site data and retry.');return false;}
-  const {data:profile,error}=await cosmosSb.from('profiles').select('id,profile_code,nickname,local_profile_id').eq('id',user.id).maybeSingle();
-  if(error||!profile){setAuthError('Profile setup is not complete in Supabase. Apply the Cosmos SQL migration, then refresh.');return false;}
-  const label=profile.nickname||profile.local_profile_id||profile.profile_code||user.id.slice(0,8).toUpperCase();
-  $('profileBadge').textContent='Profile: '+label;
-  $('connectionStatus').textContent='Connected · identity protected locally';
-  $('authMessage').textContent='Profile ready';
-  $('localProfileId').textContent=profile.local_profile_id||localIdentity.id;
-  $('identityCard').classList.remove('hidden');
-  $('authOverlay').classList.add('hidden');
-  return true;
-}
-async function renewAnonymousAccount(){
-  if(renewingAnonymousAccount)return;
-  renewingAnonymousAccount=true;
-  try{
-    if(accountHeartbeatTimer){clearInterval(accountHeartbeatTimer);accountHeartbeatTimer=null}
-    await cosmosSb.auth.signOut();
-    localIdentity=null;
-    localStorage.removeItem(LOCAL_ID_KEY);localStorage.removeItem(LOCAL_META_KEY);
-    $('authOverlay').classList.remove('hidden');
-    $('authMessage').textContent='Creating a new Cosmos profile…';
-    const {error}=await cosmosSb.auth.signInAnonymously();
-    if(error)throw error;
-    if(await finishAuth())startAccountHeartbeat();
-  }catch(e){
-    $('authMessage').textContent='Profile renewal failed';
-    setAuthError(e.message||'Could not create a new profile.');
-    $('connectionStatus').textContent='Profile renewal failed';
-  }finally{renewingAnonymousAccount=false}
-}
-async function accountHeartbeat(){
-  if(renewingAnonymousAccount)return;
-  const {data,error}=await cosmosSb.rpc('cosmos_account_heartbeat');
-  if(error){
-    const status=Number(error.status||0);
-    if(status===401||status===403||error.code==='PGRST301')await renewAnonymousAccount();
-    else console.warn('Account heartbeat:',error.message);
-    return;
-  }
-  if(data!==true)await renewAnonymousAccount();
-}
-function startAccountHeartbeat(){
-  if(accountHeartbeatTimer)clearInterval(accountHeartbeatTimer);
-  accountHeartbeat();
-  accountHeartbeatTimer=setInterval(accountHeartbeat,5000);
-}
-(async()=>{
-  $('authMessage').textContent='Connecting to Cosmos…';
-  try{
-    const {data:{session}}=await cosmosSb.auth.getSession();
-    if(session){if(await finishAuth()){startAccountHeartbeat();return;}await cosmosSb.auth.signOut();}
-    const {data,error}=await cosmosSb.auth.signInAnonymously();
-    if(error){$('authMessage').textContent='Profile setup failed';setAuthError('Enable Anonymous Sign-Ins in Supabase Authentication settings. '+error.message);$('connectionStatus').textContent='Offline / authentication unavailable';return;}
-    if(await finishAuth())startAccountHeartbeat();
-  }catch(e){$('authMessage').textContent='Profile setup failed';setAuthError(e.message||'Unexpected startup error.');$('connectionStatus').textContent='Startup error';}
-})();
-$('copyIdBtn').onclick=async()=>{const id=$('localProfileId').textContent;if(!id||id==='—')return;try{await navigator.clipboard.writeText(id);toast('Profile ID copied');}catch{toast('Could not copy profile ID')}};
-$('launchBtn').onclick=openSession;
-$('pageInput').addEventListener('keydown',e=>{if(e.key==='Enter')openSession()});
-function openSession(){if(!$('authOverlay').classList.contains('hidden')){toast('Still connecting to Cosmos…');return;}const input=$('pageInput');let raw=input.value.trim();if(!raw){input.style.borderColor='#f00';toast('Enter a destination first');input.focus();return}input.style.borderColor='';if(!/^https?:\/\//i.test(raw))raw='https://'+raw;let parsed;try{parsed=new URL(raw)}catch{toast('That destination is not valid');return}if(!['http:','https:'].includes(parsed.protocol)){toast('Only HTTP and HTTPS destinations are allowed');return}const popupName='CosmosSession-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);const popup=window.open('about:blank',popupName,'width=1280,height=720,resizable=yes,scrollbars=no');if(!popup){toast('Allow popups for Cosmos to open a session.');return}popup.document.write(sessionHtml(parsed.href));popup.document.close();}
-function sessionHtml(initialUrl){return `<!DOCTYPE html><html><head><title>Cosmos Session</title><link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script><style>${sessionCss()}<\/style></head><body class="session-body"><div id="ghostTrigger" onclick="togglePanel()"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="cornerNav" class="corner-nav"><button onclick="toggleQuickNav()" title="More navigation">⌄</button><div id="quickNav" class="quick-nav"><button onclick="togglePanel()">Tabs</button><button onclick="openAdminMenu()">Admin</button><button onclick="document.getElementById('n').focus()">New Tab</button></div></div><button id="adminBookmark" class="admin-bookmark" type="button" title="Open Admin" onclick="openAdminMenu()" aria-label="Open Admin"></button><div id="adminMenu" class="admin-menu" aria-hidden="true"><div class="admin-menu-head"><div><div class="admin-menu-title">Cosmos Admin</div><div id="adminMenuStatus" class="admin-status">Checking authorization…</div></div><button class="admin-menu-close" type="button" onclick="closeAdminMenu()">×</button></div><div class="label">Moderation</div><div class="admin-box"><div id="adminStatus" class="admin-status">Checking authorization…</div><input id="targetPlayerId" class="panel-input" placeholder="Profile ID or UUID..."><input id="nicknameInput" class="panel-input" placeholder="Admin nickname..."><div class="screen-actions"><button id="nicknameBtn" class="btn" onclick="setNickname()" disabled>Set Nickname</button><button id="inspectBtn" class="btn" onclick="requestPlayerStream()" disabled>Inspect Screen</button><button class="btn" onclick="stopPlayerStream()">Stop</button></div><div id="adminVideoContainer" class="screen-preview"><video id="adminVideo" autoplay playsinline muted></video></div></div></div><div id="panel"><div class="menu-head"><div><div class="menu-title">Cosmos</div><div id="sessionState" class="admin-status">Starting session…</div></div><div id="rolePill" class="role-pill">USER</div></div><input id="n" class="panel-input" type="text" placeholder="destination..."><button class="btn" onclick="addTab()">+ New Tab</button><div class="label">Quick Links</div><button class="btn" onclick="addTab('https://web.cloudmoonapp.com/')">CloudMoon</button><div class="label">Open Tabs</div><div id="tab-list"></div><div id="profileInfo" class="admin-status">Profile ID: loading…</div><div id="tabCount" class="admin-status">0 tabs · heartbeat starting</div><div class="label">Settings</div><button id="fixBtn" class="btn" onclick="toggleFix()">CloudMoon Fix: OFF</button><button class="btn" onclick="reloadActiveTab()">Reload Active Tab</button><button class="btn" onclick="closePanelOnly()">Close Menu</button><div style="margin-top:auto;padding-top:15px"><button class="btn danger" onclick="window.close()">Kill Session</button></div></div><div id="view-container"></div><div id="shareCard" class="share-card"><b>Administrator requested screen sharing</b><p>Your screen is shared directly with the authorized administrator using WebRTC. You must explicitly approve the browser screen-share prompt.</p><div class="row"><button class="btn" onclick="approveScreenShare()">Share Screen</button><button class="btn danger" onclick="denyScreenShare()">Deny</button></div></div><script>const SUPABASE_URL='${SUPABASE_URL}',SUPABASE_PUBLISHABLE_KEY='${SUPABASE_PUBLISHABLE_KEY}';const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'cosmos-auth-v2'}});${sessionJs(initialUrl)}<\/script></body></html>`}
-function sessionCss(){return `body,html{margin:0;padding:0;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Comfortaa,cursive}.session-body{overflow:hidden}.btn,input{font-family:inherit}#view-container{width:100%;height:100%;position:relative}iframe{width:100%;height:100%;border:0;background:#fff;position:absolute;inset:0;display:none}iframe.active{display:block}#ghostTrigger{position:fixed;top:15px;right:15px;width:42px;height:42px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);border-radius:13px;z-index:10005;cursor:pointer;display:flex;align-items:center;justify-content:center}.dot{width:4px;height:4px;background:#fff;border-radius:50%;margin:0 1.5px}#panel{position:fixed;top:15px;right:-390px;width:360px;height:calc(100% - 30px);background:rgba(10,10,10,.97);transition:.38s cubic-bezier(.16,1,.3,1);z-index:10001;padding:24px;box-sizing:border-box;display:flex;flex-direction:column;backdrop-filter:blur(20px);border:1px solid #222;border-radius:22px;overflow-y:auto;box-shadow:0 25px 80px rgba(0,0,0,.55)}#panel.open{right:15px}.menu-head{display:flex;justify-content:space-between;align-items:center}.menu-title{font-weight:700;font-size:1.35rem}.role-pill{font-size:.6rem;color:#777;border:1px solid #292929;padding:5px 8px;border-radius:999px}.label{font-size:.65rem;color:#555;text-transform:uppercase;margin:15px 0 6px 5px;letter-spacing:1px}.panel-input{background:#151515;border:1px solid #222;color:#fff;padding:12px 16px;border-radius:100px;outline:0;width:100%;margin-bottom:8px;box-sizing:border-box}.btn{padding:12px;background:#1a1a1a;color:#fff;border:0;border-radius:100px;cursor:pointer;font-weight:700;width:100%;margin-bottom:8px}.btn:hover{background:#fff;color:#000}.btn:disabled{opacity:.45;cursor:not-allowed}.danger{background:#300!important;color:#f66!important}.hidden{display:none!important}.tab-item{background:#111;padding:12px 15px;border-radius:12px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;border:1px solid #222}.tab-item.active{border-color:#555;background:#1a1a1a}.tab-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}.close-x{color:#555;font-weight:700;padding:0 5px}.close-x:hover{color:#f55}.admin-box{border:1px solid #292929;background:#0d0d0d;border-radius:16px;padding:12px}.admin-status{font-size:.7rem;color:#777;margin-bottom:8px}.screen-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.screen-actions .btn{margin:0}.screen-preview{width:100%;background:#000;border-radius:12px;border:1px solid #333;margin-top:10px;overflow:hidden;display:none}.screen-preview video{width:100%;display:block;background:#000;max-height:260px}.share-card{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10010;background:#0c0c0c;border:1px solid #333;border-radius:18px;padding:14px 16px;display:none;box-shadow:0 20px 60px rgba(0,0,0,.7);width:min(430px,90vw)}.share-card.show{display:block}.share-card b{font-size:.8rem}.share-card p{font-size:.67rem;color:#777;line-height:1.45;margin:6px 0 10px}.share-card .row{display:flex;gap:7px}.share-card .row .btn{margin:0}/* Admin bookmark tab */
-.admin-bookmark{position:fixed;right:calc(100% - 375px);bottom:15px;z-index:10007;width:42px;height:64px;background:#111;border:1px solid #2b2b2b;border-right:0;border-radius:16px 0 0 16px;color:#fff;cursor:pointer;display:none;align-items:center;justify-content:center;padding-bottom:0;box-shadow:0 12px 35px rgba(0,0,0,.45);transition:.2s}.admin-bookmark.show{display:flex}.admin-bookmark.panel-open{right:calc(100% - 375px)}.admin-bookmark:hover{width:40px;background:#181818}.admin-bookmark::before{content:'›';font-size:30px;line-height:1;transform:rotate(90deg)}.admin-menu{position:fixed;right:15px;top:15px;width:360px;height:calc(100% - 30px);background:rgba(10,10,10,.985);border:1px solid #292929;border-radius:22px;z-index:10008;padding:24px;display:none;flex-direction:column;backdrop-filter:blur(20px);box-shadow:0 25px 80px rgba(0,0,0,.65);overflow-y:auto}.admin-menu.open{display:flex}.admin-menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.admin-menu-title{font-weight:700;font-size:1.25rem}.admin-menu-close{width:34px;height:34px;border-radius:10px;background:#171717;border:1px solid #292929;color:#fff;cursor:pointer}.admin-menu-close:hover{background:#fff;color:#000}.admin-menu .admin-box{margin-top:2px}.admin-menu .label{margin-top:14px}.quick-nav{position:absolute;right:0;bottom:50px;width:150px;background:#0d0d0d;border:1px solid #292929;border-radius:15px;padding:7px;display:none;box-shadow:0 15px 40px rgba(0,0,0,.6)}.quick-nav.open{display:grid}.quick-nav button{width:100%;height:34px;border-radius:9px;background:#171717;border:0;color:#fff;font-family:inherit;font-size:.68rem;cursor:pointer;margin:0 0 5px}.quick-nav button:last-child{margin-bottom:0}.quick-nav button:hover{background:#fff;color:#000}`}
-function sessionJs(initialUrl){return `
-(()=>{
-const SESSION_STARTED_AT=Date.now();
-let tabs=[],activeIndex=-1,fixEnabled=false;
-let adminPeerConnection=null,currentInspectionChannel=null,targetUserId=null;
-let heartbeatTimer=null,screenSignalChannel=null,adminCache=null,adminCacheAt=0;
-const pendingAdminIce=[],pendingViewerIce=[];
-const container=document.getElementById('view-container'),list=document.getElementById('tab-list'),n=document.getElementById('n'),fixBtn=document.getElementById('fixBtn');
-const RTC_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'}]};
-function setSessionState(text){const el=document.getElementById('sessionState');if(el)el.textContent=text}
-function sessionToast(message){let el=document.getElementById('sessionToast');if(!el){el=document.createElement('div');el.id='sessionToast';el.style.cssText='position:fixed;left:18px;bottom:18px;background:#111;border:1px solid #292929;color:#fff;border-radius:13px;padding:11px 14px;font-size:.68rem;z-index:99999;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none';document.body.appendChild(el)}el.textContent=message;el.style.opacity='1';el.style.transform='none';clearTimeout(window.__st);window.__st=setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(8px)'},2400)}
-function togglePanel(){const panel=document.getElementById('panel');const open=panel.classList.toggle('open');document.getElementById('cornerNav').classList.toggle('open',open);const bookmark=document.getElementById('adminBookmark');if(bookmark&&adminCache)bookmark.classList.toggle('panel-open',open);if(open)document.getElementById('quickNav').classList.remove('open')}
-function openAdminMenu(){if(!adminCache){sessionToast('Administrator access required');return}document.getElementById('adminMenu').classList.add('open');document.getElementById('adminMenu').setAttribute('aria-hidden','false')}
-function closeAdminMenu(){document.getElementById('adminMenu').classList.remove('open');document.getElementById('adminMenu').setAttribute('aria-hidden','true')}
-function closePanelOnly(){document.getElementById('panel').classList.remove('open');document.getElementById('cornerNav').classList.remove('open');document.getElementById('quickNav').classList.remove('open');const bookmark=document.getElementById('adminBookmark');if(bookmark)bookmark.classList.remove('panel-open')}
-function toggleQuickNav(){document.getElementById('quickNav').classList.toggle('open')}
-function closeQuickNav(){document.getElementById('quickNav').classList.remove('open')}
-function friendly(url){try{const u=new URL(url);if(u.hostname.includes('cloudmoon'))return'CloudMoon';return u.hostname.replace(/^www\\./,'')}catch{return'New Tab'}}
-function normalizeUrl(value){let url=String(value||'').trim();if(!url)return null;if(!/^https?:\\/\\//i.test(url))url='https://'+url;try{const u=new URL(url);if(!['http:','https:'].includes(u.protocol))return null;return u.href}catch{return null}}
-function addTab(url=n.value){const normalized=normalizeUrl(url);if(!normalized){if(url)n.style.borderColor='#f00';sessionToast('Enter a valid HTTP/HTTPS destination');return}n.style.borderColor='';const id='frame-'+Date.now()+'-'+Math.random().toString(36).slice(2);const ifr=document.createElement('iframe');ifr.id=id;updateFrameSandbox(ifr);ifr.src=normalized;ifr.setAttribute('allow','display-capture; autoplay; camera; microphone');ifr.loading='eager';ifr.referrerPolicy='no-referrer-when-downgrade';ifr.onload=()=>{const i=tabs.findIndex(x=>x.id===id);if(i>-1){tabs[i].name=friendly(normalized);tabs[i].url=normalized;tabs[i].loadedAt=Date.now();renderTabs();updateSessionNow()}};container.appendChild(ifr);tabs.push({id,url:normalized,name:friendly(normalized),openedAt:Date.now(),loadTimer:setTimeout(()=>{if(!ifr.contentDocument?.body?.childElementCount)sessionToast('Some sites block embedded loading. Use the site in a new window if needed.')},7000)});n.value='';switchTab(tabs.length-1);updateTabCount()}
-function switchTab(i){if(i<0||i>=tabs.length)return;activeIndex=i;container.querySelectorAll('iframe').forEach((f,j)=>f.classList.toggle('active',j===i));renderTabs();updateTabCount();updateSessionNow()}
-function closeTab(e,i){e?.stopPropagation();const t=tabs[i];if(!t)return;if(tabs.length===1){sessionToast('Keep at least one tab open');return}clearTimeout(t.loadTimer);document.getElementById(t.id)?.remove();tabs.splice(i,1);if(activeIndex>i)activeIndex--;else if(activeIndex===i)activeIndex=Math.min(i,tabs.length-1);renderTabs();switchTab(activeIndex);updateTabCount();updateSessionNow()}
-function renderTabs(){list.innerHTML='';tabs.forEach((tab,i)=>{const el=document.createElement('div');el.className='tab-item'+(i===activeIndex?' active':'');const span=document.createElement('span');span.textContent=tab.name;const close=document.createElement('div');close.className='close-x';close.textContent='×';close.title='Close tab';close.onclick=e=>closeTab(e,i);el.append(span,close);el.onclick=()=>switchTab(i);list.appendChild(el)})}
-function updateTabCount(){const el=document.getElementById('tabCount');if(el)el.textContent=tabs.length+' tab'+(tabs.length===1?'':'s')+' · '+(activeIndex>=0?tabs[activeIndex].name:'no active tab')}
-function updateFrameSandbox(ifr){if(fixEnabled)ifr.setAttribute('sandbox','allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');else ifr.removeAttribute('sandbox')}
-function toggleFix(){fixEnabled=!fixEnabled;fixBtn.textContent='CloudMoon Fix: '+(fixEnabled?'ON':'OFF');container.querySelectorAll('iframe').forEach(ifr=>{updateFrameSandbox(ifr);const src=ifr.src;ifr.src='about:blank';setTimeout(()=>{ifr.src=src},30)});sessionToast('CloudMoon compatibility '+(fixEnabled?'enabled':'disabled'))}
-function reloadActiveTab(){if(activeIndex<0)return;const f=document.getElementById(tabs[activeIndex].id);if(!f)return;const src=f.src;f.src='about:blank';setTimeout(()=>f.src=src,80);sessionToast('Reloading '+tabs[activeIndex].name)}
-async function getUser(){const r=await sb.auth.getUser();return r.data.user||null}
-async function loadProfileInfo(){const user=await getUser();if(!user)return;const {data:p}=await sb.from('profiles').select('profile_code,local_profile_id,nickname').eq('id',user.id).maybeSingle();const el=document.getElementById('profileInfo');if(el&&p)el.textContent='Profile ID: '+(p.local_profile_id||p.profile_code)+(p.nickname?' · '+p.nickname:'')}
-async function checkAdmin(force=false){if(!force&&Date.now()-adminCacheAt<15000&&adminCache!==null)return adminCache;const user=await getUser();if(!user){adminCache=false;adminCacheAt=Date.now();document.getElementById('adminStatus').textContent='Sign-in required.';return false}const {data,error}=await sb.rpc('cosmos_is_admin');adminCache=!error&&data===true;adminCacheAt=Date.now();const bookmark=document.getElementById('adminBookmark');if(adminCache){document.getElementById('rolePill').textContent='ADMIN';document.getElementById('adminStatus').textContent='Authorized administrator';document.getElementById('adminMenuStatus').textContent='Authorized administrator';document.getElementById('inspectBtn').disabled=false;document.getElementById('nicknameBtn').disabled=false;bookmark.classList.add('show')}else{document.getElementById('adminStatus').textContent='Admin authorization denied.';document.getElementById('adminMenuStatus').textContent='Admin authorization denied.';bookmark.classList.remove('show');closeAdminMenu()}return adminCache}
-async function setNickname(){if(!(await checkAdmin()))return;const key=document.getElementById('targetPlayerId').value.trim(),nickname=document.getElementById('nicknameInput').value.trim();if(!key){document.getElementById('adminStatus').textContent='Enter a profile ID first.';return}if(nickname.length>32){document.getElementById('adminStatus').textContent='Nickname must be 32 characters or fewer.';return}const {data,error}=await sb.rpc('cosmos_set_nickname',{target_profile_code:key,new_nickname:nickname||null});if(error){document.getElementById('adminStatus').textContent='Nickname update failed: '+error.message;return}document.getElementById('adminStatus').textContent=data?'Nickname saved.':'Profile ID not found.';if(data)await loadProfileInfo()}
-async function upsertSession(){const user=await getUser();if(!user)return;const id=crypto.randomUUID();const payload={id,user_id:user.id,active_url:tabs[activeIndex]?.url||null,tab_count:tabs.length,metadata:{started_at:new Date(SESSION_STARTED_AT).toISOString(),user_agent:navigator.userAgent.slice(0,180)}};const {error}=await sb.from('cosmos_sessions').insert(payload);if(error){setSessionState('Session tracking unavailable');console.warn(error.message);return}window.cosmosSessionId=id;setSessionState('Session active · heartbeat 5s');heartbeatTimer=setInterval(updateSessionNow,5000)}
-async function updateSessionNow(){if(!window.cosmosSessionId)return;const {error}=await sb.from('cosmos_sessions').update({last_seen:new Date().toISOString(),active_url:tabs[activeIndex]?.url||null,tab_count:tabs.length}).eq('id',window.cosmosSessionId);if(error){console.warn('Session heartbeat:',error.message);window.cosmosSessionId=null;clearInterval(heartbeatTimer);heartbeatTimer=null;setSessionState('Session tracking stopped')}}
-async function closeSession(){if(heartbeatTimer){clearInterval(heartbeatTimer);heartbeatTimer=null}if(screenSignalChannel){await sb.removeChannel(screenSignalChannel);screenSignalChannel=null}if(currentInspectionChannel){await sb.removeChannel(currentInspectionChannel);currentInspectionChannel=null}if(window.viewerStream)window.viewerStream.getTracks().forEach(t=>t.stop());if(window.viewerPc){window.viewerPc.close();window.viewerPc=null}if(adminPeerConnection){adminPeerConnection.close();adminPeerConnection=null}if(window.cosmosSessionId){const id=window.cosmosSessionId;window.cosmosSessionId=null;await sb.from('cosmos_sessions').update({last_seen:new Date().toISOString(),metadata:{closed:true}}).eq('id',id)}}
-async function requestPlayerStream(){if(!(await checkAdmin()))return;const targetInput=document.getElementById('targetPlayerId').value.trim();if(!targetInput){document.getElementById('adminStatus').textContent='Enter a profile ID first.';return}const {data:target,error}=await sb.rpc('cosmos_find_profile',{target_profile_code:targetInput});if(error||!target){document.getElementById('adminStatus').textContent=error?'Profile lookup failed: '+error.message:'Profile ID not found.';return}await stopPlayerStream(false);const admin=await getUser();if(!admin||!window.cosmosSessionId)return;targetUserId=target;adminPeerConnection=new RTCPeerConnection(RTC_CONFIG);adminPeerConnection.ontrack=e=>{if(e.streams?.[0]){document.getElementById('adminVideo').srcObject=e.streams[0];document.getElementById('adminVideoContainer').style.display='block'}};adminPeerConnection.onicecandidate=e=>{if(e.candidate)sendSignal(admin.id,target,'ice',{candidate:e.candidate})};currentInspectionChannel=sb.channel('screen-signal-'+window.cosmosSessionId+'-'+Date.now());currentInspectionChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'cosmos_screen_signals',filter:'target_user_id=eq.'+admin.id},async({new:row})=>{if(row.session_id!==window.cosmosSessionId||row.sender_user_id!==target)return;if(row.kind==='offer'){try{await adminPeerConnection.setRemoteDescription(row.payload.offer);for(const c of pendingAdminIce.splice(0))await adminPeerConnection.addIceCandidate(c);const answer=await adminPeerConnection.createAnswer();await adminPeerConnection.setLocalDescription(answer);await sendSignal(admin.id,target,'answer',{answer})}catch(e){console.warn('WebRTC offer:',e)}}else if(row.kind==='ice'&&row.payload?.candidate){if(adminPeerConnection.remoteDescription)try{await adminPeerConnection.addIceCandidate(row.payload.candidate)}catch(e){}else pendingAdminIce.push(row.payload.candidate)}else if(row.kind==='stop')await stopPlayerStream(false)}).subscribe(async status=>{if(status==='SUBSCRIBED')await sendSignal(admin.id,target,'request',{adminId:admin.id})})}
-async function sendSignal(sender,target,kind,payload){const user=await getUser();if(!user||sender!==user.id)return {error:new Error('Signal sender mismatch')};return sb.from('cosmos_screen_signals').insert({sender_user_id:sender,target_user_id:target,session_id:window.cosmosSessionId,kind,payload})}
-async function stopPlayerStream(sendStop=true){const admin=await getUser();const closingSession=window.cosmosSessionId;if(sendStop&&targetUserId&&closingSession&&admin)await sendSignal(admin.id,targetUserId,'stop',{});if(closingSession){await sb.from('cosmos_screen_signals').delete().eq('session_id',closingSession)}targetUserId=null;if(currentInspectionChannel){await sb.removeChannel(currentInspectionChannel);currentInspectionChannel=null}if(adminPeerConnection){adminPeerConnection.close();adminPeerConnection=null}pendingAdminIce.length=0;const v=document.getElementById('adminVideo');if(v)v.srcObject=null;document.getElementById('adminVideoContainer').style.display='none'}
-async function setupScreenShareListener(){const user=await getUser();if(!user)return;const ch=sb.channel('screen-signal-user-'+user.id+'-'+Date.now());ch.on('postgres_changes',{event:'INSERT',schema:'public',table:'cosmos_screen_signals',filter:'target_user_id=eq.'+user.id},async({new:row})=>{if(row.sender_user_id===user.id)return;if(row.kind==='request'){const {data:isAdmin}=await sb.rpc('cosmos_is_admin_user',{target_user_id:row.sender_user_id});if(isAdmin===true){window.pendingScreenAdmin=row.sender_user_id;window.pendingScreenSession=row.session_id;document.getElementById('shareCard').classList.add('show')}return}if(row.session_id!==window.pendingScreenSession)return;if(row.kind==='answer'&&window.viewerPc){try{await window.viewerPc.setRemoteDescription(row.payload.answer);for(const c of pendingViewerIce.splice(0))await window.viewerPc.addIceCandidate(c)}catch(e){}}else if(row.kind==='ice'&&window.viewerPc&&row.payload?.candidate){if(window.viewerPc.remoteDescription)try{await window.viewerPc.addIceCandidate(row.payload.candidate)}catch(e){}else pendingViewerIce.push(row.payload.candidate)}else if(row.kind==='stop'&&window.viewerStream){window.viewerStream.getTracks().forEach(t=>t.stop());window.viewerStream=null;if(window.viewerPc){window.viewerPc.close();window.viewerPc=null}}}).subscribe();screenSignalChannel=ch}
-async function approveScreenShare(){document.getElementById('shareCard').classList.remove('show');const user=await getUser(),admin=window.pendingScreenAdmin,session=window.pendingScreenSession;if(!user||!admin||!session)return;try{const {data:isAdmin}=await sb.rpc('cosmos_is_admin_user',{target_user_id:admin});if(isAdmin!==true){sessionToast('Administrator authorization could not be verified');return}const stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});window.viewerStream=stream;window.viewerPc=new RTCPeerConnection(RTC_CONFIG);pendingViewerIce.length=0;stream.getTracks().forEach(t=>window.viewerPc.addTrack(t,stream));window.viewerPc.onicecandidate=e=>{if(e.candidate)sendSignal(user.id,admin,'ice',{candidate:e.candidate})};const offer=await window.viewerPc.createOffer();await window.viewerPc.setLocalDescription(offer);await sendSignal(user.id,admin,'offer',{offer});stream.getVideoTracks()[0].onended=async()=>{await sendSignal(user.id,admin,'stop',{});if(window.viewerPc){window.viewerPc.close();window.viewerPc=null}window.viewerStream=null}}catch(e){sessionToast('Screen share was cancelled or unavailable');console.warn(e)}}
-function denyScreenShare(){document.getElementById('shareCard').classList.remove('show');window.pendingScreenAdmin=null;window.pendingScreenSession=null}
-window.togglePanel=togglePanel;window.closePanelOnly=closePanelOnly;window.toggleQuickNav=toggleQuickNav;window.openAdminMenu=openAdminMenu;window.closeAdminMenu=closeAdminMenu;window.addTab=addTab;window.switchTab=switchTab;window.closeTab=closeTab;window.toggleFix=toggleFix;window.reloadActiveTab=reloadActiveTab;window.setNickname=setNickname;window.requestPlayerStream=requestPlayerStream;window.stopPlayerStream=stopPlayerStream;window.approveScreenShare=approveScreenShare;window.denyScreenShare=denyScreenShare;
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeQuickNav();closeAdminMenu();closePanelOnly()}});
-sb.auth.onAuthStateChange(()=>{setTimeout(()=>{adminCache=null;checkAdmin(true);loadProfileInfo()},0)});
-n.addEventListener('keydown',e=>{if(e.key==='Enter')addTab()});
-addTab('${initialUrl.replace(/'/g,"\\'")}');
-loadProfileInfo();upsertSession();checkAdmin();setupScreenShareListener();
-window.addEventListener('pagehide',()=>{if(heartbeatTimer){clearInterval(heartbeatTimer);heartbeatTimer=null}if(screenSignalChannel){sb.removeChannel(screenSignalChannel).catch(()=>{})}if(currentInspectionChannel){sb.removeChannel(currentInspectionChannel).catch(()=>{})}if(window.viewerStream)window.viewerStream.getTracks().forEach(t=>t.stop());if(window.viewerPc){window.viewerPc.close();window.viewerPc=null}if(adminPeerConnection){adminPeerConnection.close();adminPeerConnection=null}});
-})();
-`}
 
+  <script>
+    function openSession() {
+      const input = document.getElementById('pageInput');
+      let url = input.value.trim();
+      if (!url) { input.style.borderColor = "#f00"; return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-</script>
+      const popup = window.open('about:blank', 'CosmosSession', 'width=1280,height=720');
+
+      popup.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Cosmos Session</title>
+          <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+          <style>
+            body, html { margin:0; padding:0; height:100%; overflow:hidden; background:#000; font-family:'Comfortaa', cursive; color:white; }
+            #view-container { width:100%; height:100%; position:relative; }
+            iframe { width:100%; height:100%; border:none; background:#fff; position:absolute; top:0; left:0; display:none; }
+            iframe.active { display:block; }
+            
+            #ghostTrigger { position:fixed; top:15px; right:15px; width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:12px; z-index:10005; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.3s; }
+            .dot { width:4px; height:4px; background:#fff; border-radius:50%; margin:0 1px; }
+
+            #panel { 
+                position:fixed; top:0; right:-400px; width:350px; height:100%; background:rgba(10,10,10,0.98); 
+                transition:0.5s cubic-bezier(0.16,1,0.3,1); z-index:10001; padding:25px; box-sizing:border-box; 
+                display:flex; flex-direction:column; backdrop-filter: blur(20px); border-left: 1px solid #222;
+            }
+            #panel.open { transform: translateX(-400px); }
+
+            #tab-list { margin: 15px 0; max-height: 400px; overflow-y: auto; }
+            .tab-item { 
+                background: #111; padding: 12px 15px; border-radius: 12px; margin-bottom: 8px; 
+                cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+                font-size: 0.75rem; border: 1px solid #222; transition: 0.2s;
+            }
+            .tab-item.active { border-color: #555; background: #1a1a1a; }
+            .tab-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+            .close-x { color: #555; font-weight: bold; padding: 0 5px; }
+            .close-x:hover { color: #f55; }
+
+            input { background:#151515; border:1px solid #222; color:#fff; padding:12px 20px; border-radius:100px; outline:none; width:100%; box-sizing:border-box; margin-bottom:10px; }
+            .btn { padding:12px; background:#1a1a1a; color:#fff; border:none; border-radius:100px; cursor:pointer; font-weight:700; width:100%; margin-bottom:10px; transition: 0.2s; }
+            .btn:hover { background:#fff; color:#000; }
+            .label { font-size:0.7rem; color:#555; text-transform:uppercase; margin:15px 0 5px 5px; letter-spacing: 1px; }
+          </style>
+        </head>
+        <body>
+          <div id="ghostTrigger" onclick="t()">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+
+          <div id="panel">
+            <div style="font-weight:700; font-size:1.5rem; margin-bottom:20px;">Cosmos</div>
+            
+            <input id="n" type="text" placeholder="destination...">
+            <button class="btn" onclick="addTab()">+ New Tab</button>
+
+            <div class="label">Quick Links</div>
+            <button class="btn" onclick="addTab('https://web.cloudmoonapp.com/')">CloudMoon</button>
+
+            <div class="label">Open Tabs</div>
+            <div id="tab-list"></div>
+
+            <div class="label">Settings</div>
+            <button id="fixBtn" class="btn" onclick="toggleFix()">CloudMoon Fix: OFF</button>
+            
+            <div style="margin-top:auto;">
+               <button class="btn" style="background:#300; color:#f55;" onclick="window.close()">Kill Session</button>
+            </div>
+          </div>
+
+          <div id="view-container"></div>
+
+          <script>
+            let tabs = [];
+            let activeIndex = -1;
+            let fixEnabled = false;
+
+            const container = document.getElementById('view-container');
+            const list = document.getElementById('tab-list');
+            const n = document.getElementById('n');
+            const fixBtn = document.getElementById('fixBtn');
+
+            function t() { document.getElementById('panel').classList.toggle('open'); }
+
+            function getFriendlyName(url) {
+                try {
+                    let name = url.replace(/^https?:\\/\\//i, '').split('/')[0];
+                    if(name.includes('cloudmoon')) return "CloudMoon";
+                    return name.charAt(0).toUpperCase() + name.slice(1);
+                } catch(e) { return "New Tab"; }
+            }
+
+            function addTab(url = n.value) {
+                if(!url) return;
+                if(!/^https?:\\/\\//i.test(url)) url = 'https://' + url;
+                
+                const id = 'frame-' + Date.now();
+                const ifr = document.createElement('iframe');
+                ifr.id = id;
+                ifr.src = url;
+                
+                updateFrameSandbox(ifr);
+
+                ifr.onload = () => {
+                    const index = tabs.findIndex(t => t.id === id);
+                    if (index !== -1) {
+                        tabs[index].name = getFriendlyName(ifr.src);
+                        renderTabs();
+                    }
+                };
+
+                container.appendChild(ifr);
+                tabs.push({ id, url, name: getFriendlyName(url) });
+                n.value = '';
+                switchTab(tabs.length - 1);
+            }
+
+            function switchTab(index) {
+                if (index < 0) return;
+                activeIndex = index;
+                const allIframes = container.querySelectorAll('iframe');
+                allIframes.forEach((f, i) => {
+                    f.classList.toggle('active', i === index);
+                });
+                renderTabs();
+            }
+
+            function closeTab(e, index) {
+                e.stopPropagation();
+                const tab = tabs[index];
+                document.getElementById(tab.id).remove();
+                tabs.splice(index, 1);
+                
+                if (tabs.length === 0) {
+                    activeIndex = -1;
+                } else if (activeIndex >= index) {
+                    activeIndex = Math.max(0, activeIndex - 1);
+                }
+                
+                renderTabs();
+                if (activeIndex !== -1) switchTab(activeIndex);
+            }
+
+            function renderTabs() {
+                list.innerHTML = '';
+                tabs.forEach((tab, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'tab-item' + (i === activeIndex ? ' active' : '');
+                    item.innerHTML = \`<span>\${tab.name}</span><div class="close-x" onclick="closeTab(event, \${i})">×</div>\`;
+                    item.onclick = () => switchTab(i);
+                    list.appendChild(item);
+                });
+            }
+
+            function updateFrameSandbox(ifr) {
+                if(fixEnabled) {
+                    ifr.setAttribute('sandbox', 'allow-forms allow-scripts allow-same-origin');
+                } else {
+                    ifr.removeAttribute('sandbox');
+                }
+            }
+
+            function toggleFix() {
+                fixEnabled = !fixEnabled;
+                fixBtn.innerText = "CloudMoon Fix: " + (fixEnabled ? "ON" : "OFF");
+                fixBtn.style.background = fixEnabled ? "#fff" : "#1a1a1a";
+                fixBtn.style.color = fixEnabled ? "#000" : "#fff";
+                
+                const allIframes = container.querySelectorAll('iframe');
+                allIframes.forEach(f => {
+                    updateFrameSandbox(f);
+                    const src = f.src;
+                    f.src = 'about:blank';
+                    setTimeout(() => { f.src = src; }, 50);
+                });
+            }
+
+            addTab('${url}');
+            n.addEventListener('keypress', (e) => { if(e.key === 'Enter') addTab(); });
+          <\/script>
+        </body>
+        </html>
+      `);
+      popup.document.close();
+    }
+
+    document.getElementById('pageInput').addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') openSession(); 
+    });
+  </script>
 </body>
 </html>
